@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  root "rounds#new"
+  root "games#new"
 
-  resources :rounds
+  resources :games do
+    resources :rounds
+  end
 end

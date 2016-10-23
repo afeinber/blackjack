@@ -2,7 +2,7 @@
   Your balance: 1000 roubles
 </h3>
 
-<%= simple_form_for @round do |f| %>
+<%= simple_form_for [@round.game, @round] do |f| %>
   <%= f.input :bet, label: "Bet Amount:" %>
   <%= f.button :submit %>
 <% end %>

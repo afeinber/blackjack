@@ -1,8 +1,9 @@
 require 'test_helper'
 
 class BlackJackTest < ActionDispatch::IntegrationTest
-  test "can see the welcome page" do
+  test "can see their money" do
     get "/"
-    assert_select "h1", "Welcome#index"
+
+    assert_select "h3", "Your balance: 1000 roubles"
   end
 end

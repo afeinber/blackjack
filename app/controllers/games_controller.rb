@@ -4,7 +4,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    @game = Game.new
+    @game = ::GameBuilderService.build_game
 
     if @game.save
       redirect_to new_game_round_path(@game)

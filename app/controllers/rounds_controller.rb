@@ -7,6 +7,7 @@ class RoundsController < ApplicationController
   def create
     @round = Round.new(round_params)
     @round.game = Game.find(params[:game_id])
+    @round.deal_inital_hands
 
     if @round.save
       redirect_to game_round_path(@round.game, @round)

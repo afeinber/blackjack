@@ -6,12 +6,12 @@ class Round < ApplicationRecord
   validates :game, presence: true
 
   def deal_inital_hands
-    player_hand = self.hands.build
-    dealer_hand = self.hands.build
+    dealer_hand = self.hands.build(is_dealer: true)
+    player_hand = self.hands.build(is_dealer: false)
 
-    player_hand.cards << game.deck.pop
-    player_hand.cards << game.deck.pop
-    dealer_hand.cards << game.deck.pop
-    dealer_hand.cards << game.deck.pop
+    2.times do
+      player_hand.cards << game.deck.pop
+      dealer_hand.cards << game.deck.pop
+    end
   end
 end

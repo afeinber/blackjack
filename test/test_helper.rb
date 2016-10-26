@@ -3,6 +3,7 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'capybara/rails'
 require 'minitest/mock'
+require 'minitest/rails'
 
 class ActionDispatch::IntegrationTest
   include Capybara::DSL

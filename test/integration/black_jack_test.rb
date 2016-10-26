@@ -17,6 +17,6 @@ class BlackJackTest < ActionDispatch::IntegrationTest
 
     assert page.has_content? "Your balance: 950 roubles"
     assert page.has_content? "Your bet: 50 roubles"
-    assert page.has_content? "Your Cards: A♠, 8♣"
+    assert page.has_selector? ".player-hand .card", count: 2
   end
 end

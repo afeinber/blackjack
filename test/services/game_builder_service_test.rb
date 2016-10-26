@@ -1,10 +1,12 @@
 require 'test_helper'
 
 class GameBuilderServiceTest < ActiveSupport::TestCase
-  test "builds a proper deck" do
-    deck = GameBuilderService.build_deck
+  test "assigns a deck using the deck builder service" do
+    deck = Deck.new
 
-    assert_equal deck.cards.size, 52
+    DeckBuilderService.stub :build_deck, deck do
+      assert_equal GameBuilderService.build_game.deck, deck
+    end
   end
 end
 

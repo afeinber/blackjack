@@ -13,4 +13,5 @@
 <div class="player-actions">
   <h2>Your Actions:</h2>
   <%= button_to "Hit", "/games/#{@round.game.id}/rounds/#{@round.id}/hit", method: :patch %>
+  <%= button_to "Double", "/games/#{@round.game.id}/rounds/#{@round.id}/double", method: :patch %>
 </div>

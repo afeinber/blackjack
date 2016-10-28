@@ -4,5 +4,6 @@ Rails.application.routes.draw do
   resources :games do
     resources :rounds
     patch '/rounds/:id/hit', to: 'rounds#hit'
+    patch '/rounds/:id/double', to: 'rounds#double'
   end
 end

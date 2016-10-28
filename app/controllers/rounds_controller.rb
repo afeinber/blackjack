@@ -27,6 +27,15 @@ class RoundsController < ApplicationController
     end
   end
 
+  def double
+    @round = Round.joins(:game).find(params[:id])
+    @round.bet = @round.bet * 2
+
+    if @round.save
+      redirect_to game_round_path(@round.game, @round)
+    end
+  end
+
   private
 
   def round_params

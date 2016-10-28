@@ -1,17 +1,19 @@
 require 'test_helper'
 
 class BlackJackTest < ActionDispatch::IntegrationTest
-  test "can see their money" do
+  def start_game
     visit "/"
     click_on 'Start Game'
+  end
+
+  test "can see their money" do
+    start_game
 
     assert page.has_content? "Your balance: 1000 roubles"
   end
 
   test "can start a game" do
-    visit "/"
-    click_on 'Start Game'
-
+    start_game
     fill_in 'round_bet', with: 50
     click_on 'Create Round'
 
@@ -24,11 +26,19 @@ class BlackJackTest < ActionDispatch::IntegrationTest
   end
 
   test "can hit on a round" do
-    visit "/"
-    click_on 'Start Game'
+    start_game
     fill_in 'round_bet', with: 50
     click_on 'Create Round'
     click_on 'Hit'
     assert page.has_selector? ".player-hand .card", count: 3
+  end
+
+  test "can double their bet" do
+    start_game
+    fill_in 'round_bet', with: 50
+    click_on 'Create Round'
+    click_on 'Double'
+
+    assert page.has_content? "Your bet: 100 roubles"
   end
 end

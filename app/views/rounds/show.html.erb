@@ -2,6 +2,10 @@
 <h3>Your balance: <%= @round.game.balance %> roubles</h3>
 <div class="player-hand"><h3>Your cards:</h3>
   <% @round.player_hand.cards.each do |card| %>
-    <p class="card"><%= card.value %> <%= card.suit %></p>
+    <span class="card"><%= card.value %><%= card.suit %></span>
   <% end %>
+</div>
+<div class="dealer-hand"><h3>Dealer's cards:</h3>
+  <span class="card"><%= @round.dealer_hand.cards.first.value %><%= @round.dealer_hand.cards.first.suit %></span>
+  <span class="card">????</span>
 </div>

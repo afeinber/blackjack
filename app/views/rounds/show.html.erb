@@ -9,3 +9,8 @@
   <span class="card"><%= @round.dealer_hand.cards.first.value %><%= @round.dealer_hand.cards.first.suit %></span>
   <span class="card">????</span>
 </div>
+
+<div class="player-actions">
+  <h2>Your Actions:</h2>
+  <%= button_to "Hit", "/games/#{@round.game.id}/rounds/#{@round.id}/hit", method: :patch %>
+</div>

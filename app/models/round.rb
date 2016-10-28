@@ -18,10 +18,10 @@ class Round < ApplicationRecord
   end
 
   def player_hand
-    hands.where(is_dealer: false).first
+    @player_hand ||= hands.where(is_dealer: false).first
   end
 
   def dealer_hand
-    hands.where(is_dealer: true).first
+    @dealer_hand ||= hands.where(is_dealer: true).first
   end
 end

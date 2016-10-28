@@ -18,6 +18,15 @@ class RoundsController < ApplicationController
     @round = Round.joins(:game).find(params[:id])
   end
 
+  def hit
+    @round = Round.joins(:game).find(params[:id])
+    @round.player_hand.cards << @round.game.deck.pop
+
+    if @round.save
+      redirect_to game_round_path(@round.game, @round)
+    end
+  end
+
   private
 
   def round_params

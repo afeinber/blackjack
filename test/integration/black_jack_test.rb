@@ -22,4 +22,13 @@ class BlackJackTest < ActionDispatch::IntegrationTest
       assert page.has_content? "????"
     end
   end
+
+  test "can hit on a round" do
+    visit "/"
+    click_on 'Start Game'
+    fill_in 'round_bet', with: 50
+    click_on 'Create Round'
+    click_on 'Hit'
+    assert page.has_selector? ".player-hand .card", count: 3
+  end
 end

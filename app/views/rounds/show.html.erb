@@ -1,7 +1,7 @@
 <h3>Your bet: <%= @round.bet %> roubles</h3>
 <h3>Your balance: <%= @round.game.balance %> roubles</h3>
 <div class="player-hand"><h3>Your cards:</h3>
-  <% @round.hands.first.cards.each do |card| %>
+  <% @round.player_hand.cards.each do |card| %>
     <p class="card"><%= card.value %> <%= card.suit %></p>
   <% end %>
 </div>

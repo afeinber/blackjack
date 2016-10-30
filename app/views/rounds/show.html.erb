@@ -1,17 +1,28 @@
-<h3>Your bet: <%= @round.bet %> roubles</h3>
-<h3>Your balance: <%= @round.game.balance %> roubles</h3>
-<div class="player-hand"><h3>Your cards:</h3>
-  <% @round.player_hand.cards.each do |card| %>
-    <span class="card"><%= card.rank %><%= card.suit %></span>
-  <% end %>
-</div>
-<div class="dealer-hand"><h3>Dealer's cards:</h3>
-  <span class="card"><%= @round.dealer_hand.cards.first.rank %><%= @round.dealer_hand.cards.first.suit %></span>
-  <span class="card">????</span>
+<div class="hand-container">
+  <div class="player-hand hand"><h3>Your cards:</h3>
+    <% @round.player_hand.cards.each do |card| %>
+      <span class="card"><%= card.rank %><%= card.suit %></span>
+    <% end %>
+  </div>
+  <div class="dealer-hand hand"><h3>Dealer's cards:</h3>
+    <span class="card"><%= @round.dealer_hand.cards.first.rank %><%= @round.dealer_hand.cards.first.suit %></span>
+    <span class="card">????</span>
+  </div>
 </div>
 
-<div class="player-actions">
-  <h2>Your Actions:</h2>
-  <%= button_to "Hit", "/games/#{@round.game.id}/rounds/#{@round.id}/hit", method: :patch %>
-  <%= button_to "Double", "/games/#{@round.game.id}/rounds/#{@round.id}/double", method: :patch %>
+<div class="money">
+  <span><strong>Your balance:</strong> <%= @round.game.balance %> roubles </span>
+  <span><strong>Your bet:</strong> <%= @round.bet %> roubles</span>
 </div>
+
+<% if @round.lost %>
+  <h3>Sorry. You went over 21. Please <%= link_to "play another round!", new_game_round_path(@round.game) %></h3>
+<% else %>
+  <div class="player-actions">
+    <h3>Your Actions:</h3>
+    <div class="action-buttons">
+      <%= button_to "Hit", "/games/#{@round.game.id}/rounds/#{@round.id}/hit", method: :patch %>
+      <%= button_to "Double", "/games/#{@round.game.id}/rounds/#{@round.id}/double", method: :patch %>
+    </div>
+  </div>
+<% end %>

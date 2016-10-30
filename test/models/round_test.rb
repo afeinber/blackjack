@@ -28,18 +28,22 @@ class RoundTest < ActiveSupport::TestCase
   describe "#hit" do
     before do
       round.hands.build(is_dealer: false)
+      round.game.deck.cards << Card.new
       round.save
     end
 
     it "adds a new card to the players hand" do
-      game.deck.stub :pop, Card.new do
-        round.hit
+      round.hit
 
-        assert_equal 1, round.player_hand.cards.size
-      end
+      assert_equal 1, round.player_hand.cards.size
     end
 
-    it "ends the round if the player is over 21" do
+    it "marks the round lost if the player is over 21" do
+      round.stub :over_twenty_one?, true do
+        round.hit
+
+        assert_equal true, round.lost
+      end
     end
   end
 

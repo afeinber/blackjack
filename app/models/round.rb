@@ -21,7 +21,7 @@ class Round < ApplicationRecord
     player_hand.cards << game.deck.pop
 
     if over_twenty_one?(player_hand)
-      # player loses
+      self.lost = true
     end
   end
 

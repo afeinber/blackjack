@@ -19,4 +19,8 @@ class Hand < ApplicationRecord
     end
     value
   end
+
+  def over_twenty_one?
+    low_value > 21
+  end
 end

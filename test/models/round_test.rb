@@ -39,7 +39,7 @@ class RoundTest < ActiveSupport::TestCase
     end
 
     it "marks the round completed and lost if the player is over 21" do
-      round.stub :over_twenty_one?, true do
+      round.player_hand.stub :over_twenty_one?, true do
         round.hit
 
         assert_equal true, round.completed
@@ -101,37 +101,6 @@ class RoundTest < ActiveSupport::TestCase
 
     it "returns true otherwise" do
       assert_equal true, round.can_double?
-    end
-  end
-
-  describe "#over_twenty_one?" do
-    before do
-      round.hands.build(is_dealer: false)
-      round.save
-    end
-
-    it 'returns false if under or equal to twenty-one' do
-      cards = [
-        Card.new(suit: "S1", rank: "5"),
-        Card.new(suit: "S21", rank: "7"),
-        Card.new(suit: "S3", rank: "9"),
-      ]
-
-      round.player_hand.stub :cards, cards do
-        assert_equal false, round.over_twenty_one?(round.player_hand)
-      end
-    end
-
-    it 'returns true if over twenty-one' do
-      cards = [
-        Card.new(suit: "S1", rank: "K"),
-        Card.new(suit: "S21", rank: "K"),
-        Card.new(suit: "S3", rank: "2"),
-      ]
-
-      round.player_hand.stub :cards, cards do
-        assert_equal true, round.over_twenty_one?(round.player_hand)
-      end
     end
   end
 end

@@ -21,7 +21,7 @@ class Round < ApplicationRecord
   def hit
     player_hand.cards << game.deck.pop
 
-    if over_twenty_one?(player_hand)
+    if player_hand.over_twenty_one?
       self.completed = true
       self.result = :loss
     end
@@ -29,10 +29,6 @@ class Round < ApplicationRecord
 
   def can_double?
     !doubled && game.balance >= bet
-  end
-
-  def over_twenty_one?(hand)
-    hand.low_value > 21
   end
 
   def player_hand

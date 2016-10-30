@@ -29,4 +29,26 @@ class HandTest < ActiveSupport::TestCase
       assert_equal 13, hand.best_value
     end
   end
+
+  describe "#over_twenty_one?" do
+    it 'returns false if under or equal to twenty-one' do
+      hand.cards = [
+        create(:card, rank: "5", cardable: hand),
+        create(:card, rank: "7", cardable: hand),
+        create(:card, rank: "9", cardable: hand),
+      ]
+
+      assert_equal false, hand.over_twenty_one?
+    end
+
+    it 'returns true if over twenty-one' do
+      hand.cards = [
+        create(:card, rank: "K", cardable: hand),
+        create(:card, rank: "K", cardable: hand),
+        create(:card, rank: "2", cardable: hand),
+      ]
+
+      assert_equal true, hand.over_twenty_one?
+    end
+  end
 end

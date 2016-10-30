@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class RoundTest < ActiveSupport::TestCase
-  let(:game) { create(:game) }
+  let(:game) { create(:game, balance: 1000) }
   let(:round) { create(:round, game: game) }
 
   describe "#initial_hands" do
@@ -10,8 +10,8 @@ class RoundTest < ActiveSupport::TestCase
         new_hands = round.initial_hands
 
         assert_equal new_hands.size, 2
-        assert_equal new_hands.first.is_dealer, true
-        assert_equal new_hands.last.is_dealer, false
+        assert_equal new_hands.first.is_dealer, false
+        assert_equal new_hands.last.is_dealer, true
       end
     end
 
@@ -28,7 +28,8 @@ class RoundTest < ActiveSupport::TestCase
   describe "#hit" do
     before do
       round.hands.build(is_dealer: false)
-      round.game.deck.cards << Card.new
+      round.hands.build(is_dealer: true)
+      round.game.deck.cards << build(:card, rank: 2)
       round.save
     end
 
@@ -39,12 +40,19 @@ class RoundTest < ActiveSupport::TestCase
     end
 
     it "marks the round completed and lost if the player is over 21" do
-      round.player_hand.stub :over_twenty_one?, true do
-        round.hit
+      round.dealer_hand.cards = [
+        build(:card, rank: '2'),
+        build(:card, rank: '2'),
+      ]
+      round.player_hand.cards = [
+        build(:card, rank: 'K'),
+        build(:card, rank: 'K'),
+      ]
 
-        assert_equal true, round.completed
-        assert_equal 'loss', round.result
-      end
+      round.hit
+
+      assert_equal true, round.completed
+      assert_equal 'loss', round.result
     end
   end
 
@@ -72,7 +80,10 @@ class RoundTest < ActiveSupport::TestCase
     end
 
     it "marks the game as a win if the dealer goes over 21" do
-      round.game.deck.cards << create(:card, rank: 'Q', cardable: round.game.deck)
+      round.player_hand.cards << build(:card, rank: '2')
+      round.player_hand.cards << build(:card, rank: '2')
+
+      round.game.deck.cards << build(:card, rank: 'Q')
 
       round.complete_round
 
@@ -86,6 +97,54 @@ class RoundTest < ActiveSupport::TestCase
       round.complete_round
 
       assert_equal 'win', round.result
+    end
+
+    it "rewards the player if the player wins" do
+      round.bet = 100
+      round.player_hand.cards << build(:card, rank: 'A')
+      round.player_hand.cards << build(:card, rank: 'K')
+
+      round.complete_round
+
+      assert_equal round.game.balance, 1200
+    end
+
+    it "marks the game as a tie if the player and dealer have the same hand value" do
+      round.player_hand.cards << build(:card, rank: 'A')
+      round.player_hand.cards << build(:card, rank: 'K')
+      round.game.deck.cards << build(:card, rank: '5')
+
+      round.complete_round
+
+      assert_equal 'tie', round.result
+    end
+
+    it "returns the bet to the player if it's a tie" do
+      round.player_hand.cards << build(:card, rank: 'A')
+      round.player_hand.cards << build(:card, rank: 'K')
+      round.game.deck.cards << build(:card, rank: '5')
+
+      round.complete_round
+
+      assert_equal round.game.balance, 1000
+    end
+
+    it "marks the game as a loss if the player has a lower hand value" do
+      round.player_hand.cards << build(:card, rank: '2')
+      round.player_hand.cards << build(:card, rank: '3')
+      round.game.deck.cards << build(:card, rank: '5')
+
+      round.complete_round
+
+      assert_equal 'loss', round.result
+    end
+
+    it "ends the game if the balance is 0" do
+      round.game.balance = 0
+
+      round.complete_round
+
+      assert_equal true, round.game.completed
     end
   end
 

@@ -19,7 +19,7 @@ class HandTest < ActiveSupport::TestCase
       assert_equal 21, hand.best_value
     end
 
-    it 'returns the lowvalue of an ace if necessary' do
+    it 'returns the low value of an ace if necessary' do
       hand.cards = [
         build(:card, rank: 'A'),
         build(:card, rank: 'K'),
@@ -27,6 +27,16 @@ class HandTest < ActiveSupport::TestCase
       ]
 
       assert_equal 13, hand.best_value
+    end
+
+    it 'returns 0 if over 21' do
+      hand.cards = [
+        build(:card, rank: 'Q'),
+        build(:card, rank: 'K'),
+        build(:card, rank: '2'),
+      ]
+
+      assert_equal 0, hand.best_value
     end
   end
 

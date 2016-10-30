@@ -111,4 +111,22 @@ class BlackJackTest < ActionDispatch::IntegrationTest
 
     assert page.has_content? "You won!"
   end
+
+  test "balance runs out" do
+    start_game
+    game = Game.last
+    game.deck.cards = [
+      Card.new(suit: "s1", rank: 'Q'),
+      Card.new(suit: "s1", rank: 'K'),
+      Card.new(suit: "s1", rank: 'J'),
+      Card.new(suit: "s2", rank: 'Q'),
+      Card.new(suit: "s1", rank: 'K'),
+    ]
+    game.save
+    fill_in 'round_bet', with: 1000
+    click_on 'Create Round'
+    click_on 'Hit'
+
+    assert page.has_content? "Game over!"
+  end
 end

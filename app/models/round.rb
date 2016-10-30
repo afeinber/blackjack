@@ -46,7 +46,7 @@ class Round < ApplicationRecord
       dealer_hand.cards << game.deck.pop
     end
 
-    if player_hand.best_value > dealer_hand.best_value
+    if player_hand.best_value > dealer_hand.best_value || dealer_hand.over_twenty_one?
       self.result = :win
     end
   end

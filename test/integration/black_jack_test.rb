@@ -72,7 +72,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "player wins" do
+  test "player stays and wins" do
     start_game
     fill_in 'round_bet', with: 50
     click_on 'Create Round'
@@ -85,6 +85,26 @@ class BlackJackTest < ActionDispatch::IntegrationTest
       Card.new(suit: "s1", rank: "A"),
       Card.new(suit: "s2", rank: "6"),
     ]
+    round.save
+    click_on 'Stay'
+
+    assert page.has_content? "You won!"
+  end
+
+  test "dealer goes over 21" do
+    start_game
+    fill_in 'round_bet', with: 50
+    click_on 'Create Round'
+    round = Round.last
+    round.player_hand.cards = [
+      Card.new(suit: "s1", rank: "2"),
+      Card.new(suit: "s2", rank: "2"),
+    ]
+    round.dealer_hand.cards = [
+      Card.new(suit: "s1", rank: "K"),
+      Card.new(suit: "s2", rank: "6"),
+    ]
+    round.game.deck.cards.push(Card.new(suit: 'S3', rank: 'Q'))
     round.save
     click_on 'Stay'
 

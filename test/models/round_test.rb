@@ -55,8 +55,8 @@ class RoundTest < ActiveSupport::TestCase
       round.save
 
       # give value 16 to the dealer
-      round.dealer_hand.cards.create(suit: "S1", rank: "A")
-      round.dealer_hand.cards.create(suit: "S2", rank: "5")
+      round.dealer_hand.cards.create(suit: "S1", rank: "K")
+      round.dealer_hand.cards.create(suit: "S2", rank: "6")
     end
 
     it "marks the round as complete" do
@@ -69,6 +69,14 @@ class RoundTest < ActiveSupport::TestCase
       round.complete_round
 
       assert_equal round.dealer_hand.cards.size, 3
+    end
+
+    it "marks the game as a win if the dealer goes over 21" do
+      round.game.deck.cards << create(:card, rank: 'Q', cardable: round.game.deck)
+
+      round.complete_round
+
+      assert_equal 'win', round.result
     end
 
     it "marks the game as a win if the player has a higher hand value" do

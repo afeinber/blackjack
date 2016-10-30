@@ -1,8 +1,8 @@
 <h3 class="current-balance">
-  Your balance: 1000 roubles
+  Your balance: <%= @round.game.balance %> roubles
 </h3>
 
 <%= simple_form_for [@round.game, @round] do |f| %>
-  <%= f.input :bet, label: "Bet Amount:" %>
+  <%= f.input :bet, label: "Bet Amount:", input_html: { min: '0', max: "#{@round.game.balance}" } %>
   <%= f.button :submit %>
 <% end %>

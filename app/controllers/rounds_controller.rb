@@ -5,12 +5,15 @@ class RoundsController < ApplicationController
   end
 
   def create
-    @round = Round.new(round_params)
-    @round.game = Game.find(params[:game_id])
+    @round = Game.find(params[:game_id]).rounds.build
+    @round.bet = round_params[:bet]
+    @round.game.balance -= @round.bet
     @round.hands = @round.initial_hands
 
-    if @round.save
+    if @round.game.save
       redirect_to game_round_path(@round.game, @round)
+    else
+      redirect_to :back, alert: "Something went wrong. Please try again."
     end
   end
 

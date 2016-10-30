@@ -44,6 +44,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
 
   test "can see results if over 21" do
     start_game
+    fill_in 'round_bet', with: 50
     game = Game.last
     game.deck.cards = [
       Card.new(suit: "s1", rank: 'Q'),
@@ -56,7 +57,8 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     fill_in 'round_bet', with: 50
     click_on 'Create Round'
     click_on 'Hit'
+    click_on "play another round!"
 
-    assert page.has_content? "You went over 21. Please play another round!"
+    assert page.has_content? "Your balance: 950 roubles"
   end
 end

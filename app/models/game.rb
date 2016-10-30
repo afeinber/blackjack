@@ -1,10 +1,6 @@
 class Game < ApplicationRecord
-  INITIAL_BALANCE = 1000
+  validates :balance, numericality: { greater_than_or_equal_to: 0 }
 
   has_many :rounds, dependent: :destroy
   has_one :deck, autosave: true
-
-  def balance
-    INITIAL_BALANCE - rounds.map(&:bet).reduce(0, :+)
-  end
 end

@@ -17,6 +17,18 @@ class Round < ApplicationRecord
     new_hands
   end
 
+  def hit
+    player_hand.cards << game.deck.pop
+
+    if over_twenty_one?(player_hand)
+      # player loses
+    end
+  end
+
+  def over_twenty_one?(hand)
+    hand.cards.map(&:low_value).reduce(:+) > 21
+  end
+
   def player_hand
     @player_hand ||= hands.where(is_dealer: false).first
   end

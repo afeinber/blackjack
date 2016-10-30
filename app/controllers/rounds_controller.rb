@@ -20,7 +20,7 @@ class RoundsController < ApplicationController
 
   def hit
     @round = Round.joins(:game).find(params[:id])
-    @round.player_hand.cards << @round.game.deck.pop
+    @round.hit
 
     if @round.save
       redirect_to game_round_path(@round.game, @round)

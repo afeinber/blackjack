@@ -10,7 +10,7 @@ class RoundsController < ApplicationController
     @round.game.balance -= @round.bet
     @round.hands = @round.initial_hands
 
-    if @round.game.save
+    if ActiveRecord::Base.transaction { @round.save && @round.game.save }
       redirect_to game_round_path(@round.game, @round)
     else
       redirect_to :back, alert: "Something went wrong. Please try again."
@@ -25,7 +25,7 @@ class RoundsController < ApplicationController
     @round = Round.includes(:game).find(params[:id])
     @round.hit
 
-    if @round.save
+    if ActiveRecord::Base.transaction { @round.game.save && @round.save }
       redirect_to game_round_path(@round.game, @round)
     end
   end
@@ -50,10 +50,6 @@ class RoundsController < ApplicationController
     @round = game.rounds.find(params[:id])
 
     @round.complete_round
-
-    if @round.result == 'win'
-      @round.game.balance += @round.bet * 2
-    end
 
     if ActiveRecord::Base.transaction { @round.game.save && @round.save }
       redirect_to game_round_path(game, @round)

@@ -1,6 +1,6 @@
 class Hand < ApplicationRecord
   belongs_to :round
-  has_many :cards, as: :cardable, autosave: true
+  has_many :cards, as: :cardable
 
   def low_value
     self.cards.map(&:low_value).reduce(0, :+)
@@ -17,7 +17,7 @@ class Hand < ApplicationRecord
       value += 10
       ace_count -= 1
     end
-    value
+    value <= 21 ? value : 0
   end
 
   def over_twenty_one?

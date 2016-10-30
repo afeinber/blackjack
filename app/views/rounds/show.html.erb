@@ -21,12 +21,16 @@
   <span><strong>Your bet:</strong> <%= @round.bet %> roubles</span>
 </div>
 
-<% if @round.completed %>
+<% if @round.completed && !@round.game.completed %>
   <% if @round.result == 'loss' %>
     <h3>Sorry. You lost. Please <%= link_to "play another round!", new_game_round_path(@round.game) %></h3>
   <% elsif @round.result == 'win' %>
     <h3>You won! Please <%= link_to "play another round!", new_game_round_path(@round.game) %></h3>
+  <% else %>
+    <h3>You tied. Please <%= link_to "play another round!", new_game_round_path(@round.game) %></h3>
   <% end %>
+<% elsif @round.game.completed %>
+    <h3>Game over! Please <%= link_to "play again!", new_game_path(@round.game) %></h3>
 <% else %>
   <div class="player-actions">
     <h3>Your Actions:</h3>

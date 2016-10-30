@@ -51,7 +51,11 @@ class RoundsController < ApplicationController
 
     @round.complete_round
 
-    if @round.save
+    if @round.result == 'win'
+      @round.game.balance += @round.bet * 2
+    end
+
+    if ActiveRecord::Base.transaction { @round.game.save && @round.save }
       redirect_to game_round_path(game, @round)
     end
   end

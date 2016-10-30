@@ -89,6 +89,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     click_on 'Stay'
 
     assert page.has_content? "You won!"
+    assert page.has_content? "Your balance: 1050 roubles"
   end
 
   test "dealer goes over 21" do

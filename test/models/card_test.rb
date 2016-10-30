@@ -20,4 +20,12 @@ class CardTest < ActiveSupport::TestCase
       assert_equal card.low_value, 1
     end
   end
+
+  describe "#high_value" do
+    it "calculates the correct high_value for aces" do
+      card = Card.new(rank: 'A')
+
+      assert_equal card.high_value, 11
+    end
+  end
 end

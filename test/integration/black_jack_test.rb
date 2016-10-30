@@ -40,11 +40,11 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     click_on 'Double'
 
     assert page.has_content? "Your bet: 100 roubles"
+    assert page.has_content? "Your balance: 900 roubles"
   end
 
   test "can see results if over 21" do
     start_game
-    fill_in 'round_bet', with: 50
     game = Game.last
     game.deck.cards = [
       Card.new(suit: "s1", rank: 'Q'),
@@ -60,5 +60,34 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     click_on "play another round!"
 
     assert page.has_content? "Your balance: 950 roubles"
+  end
+
+  test "can choose to stay, and sees the dealers hand" do
+    start_game
+    fill_in 'round_bet', with: 50
+    click_on 'Create Round'
+    click_on 'Stay'
+    within(:css, ".dealer-hand .card:nth-of-type(2)") do
+      assert page.has_no_content? "????"
+    end
+  end
+
+  test "player wins" do
+    start_game
+    fill_in 'round_bet', with: 50
+    click_on 'Create Round'
+    round = Round.last
+    round.player_hand.cards = [
+      Card.new(suit: "s1", rank: "A"),
+      Card.new(suit: "s2", rank: "K"),
+    ]
+    round.dealer_hand.cards = [
+      Card.new(suit: "s1", rank: "A"),
+      Card.new(suit: "s2", rank: "6"),
+    ]
+    round.save
+    click_on 'Stay'
+
+    assert page.has_content? "You won!"
   end
 end

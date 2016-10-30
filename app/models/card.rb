@@ -5,6 +5,10 @@ class Card < ApplicationRecord
     rank == 'A' ? 1 : non_ace_value
   end
 
+  def high_value
+    rank == 'A' ? 11 : non_ace_value
+  end
+
   private
 
   def non_ace_value

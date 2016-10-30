@@ -18,11 +18,11 @@ class RoundsController < ApplicationController
   end
 
   def show
-    @round = Round.joins(:game).find(params[:id])
+    @round = Round.includes(hands: [:cards]).find(params[:id])
   end
 
   def hit
-    @round = Round.joins(:game).find(params[:id])
+    @round = Round.includes(:game).find(params[:id])
     @round.hit
 
     if @round.save
@@ -31,11 +31,28 @@ class RoundsController < ApplicationController
   end
 
   def double
-    @round = Round.joins(:game).find(params[:id])
-    @round.bet = @round.bet * 2
+    game = Game.includes(:rounds).find(params[:game_id])
+    @round = game.rounds.find(params[:id])
+
+    game.balance -= @round.bet
+    @round.bet *= 2
+    @round.doubled = true
+
+    if ActiveRecord::Base.transaction { game.save && @round.save }
+      redirect_to game_round_path(game, @round)
+    else
+      redirect_to :back, alert: "Something went wrong. Please try again."
+    end
+  end
+
+  def stay
+    game = Game.includes(:rounds).find(params[:game_id])
+    @round = game.rounds.find(params[:id])
+
+    @round.complete_round
 
     if @round.save
-      redirect_to game_round_path(@round.game, @round)
+      redirect_to game_round_path(game, @round)
     end
   end
 

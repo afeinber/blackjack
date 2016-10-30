@@ -5,8 +5,14 @@
     <% end %>
   </div>
   <div class="dealer-hand hand"><h3>Dealer's cards:</h3>
-    <span class="card"><%= @round.dealer_hand.cards.first.rank %><%= @round.dealer_hand.cards.first.suit %></span>
-    <span class="card">????</span>
+    <% if @round.completed %>
+      <% @round.dealer_hand.cards.each do |card| %>
+        <span class="card"><%= card.rank %><%= card.suit %></span>
+      <% end %>
+    <% else %>
+      <span class="card"><%= @round.dealer_hand.cards.first.rank %><%= @round.dealer_hand.cards.first.suit %></span>
+      <span class="card">????</span>
+    <% end %>
   </div>
 </div>
 
@@ -15,14 +21,19 @@
   <span><strong>Your bet:</strong> <%= @round.bet %> roubles</span>
 </div>
 
-<% if @round.lost %>
-  <h3>Sorry. You went over 21. Please <%= link_to "play another round!", new_game_round_path(@round.game) %></h3>
+<% if @round.completed %>
+  <% if @round.result == 'loss' %>
+    <h3>Sorry. You lost. Please <%= link_to "play another round!", new_game_round_path(@round.game) %></h3>
+  <% elsif @round.result == 'win' %>
+    <h3>You won! Please <%= link_to "play another round!", new_game_round_path(@round.game) %></h3>
+  <% end %>
 <% else %>
   <div class="player-actions">
     <h3>Your Actions:</h3>
     <div class="action-buttons">
       <%= button_to "Hit", "/games/#{@round.game.id}/rounds/#{@round.id}/hit", method: :patch %>
-      <%= button_to "Double", "/games/#{@round.game.id}/rounds/#{@round.id}/double", method: :patch %>
+      <%= button_to "Double", "/games/#{@round.game.id}/rounds/#{@round.id}/double", method: :patch, disabled: !@round.can_double? %>
+      <%= button_to "Stay", "/games/#{@round.game.id}/rounds/#{@round.id}/stay", method: :patch %>
     </div>
   </div>
 <% end %>

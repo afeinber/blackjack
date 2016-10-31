@@ -6,21 +6,21 @@ class RoundTest < ActiveSupport::TestCase
 
   describe "#initial_hands" do
     it "creates the correct hands" do
-      game.deck.stub :pop, Card.new do
+      game.deck.stub :pop, build(:card) do
         new_hands = round.initial_hands
 
         assert_equal new_hands.size, 2
-        assert_equal new_hands.first.is_dealer, false
-        assert_equal new_hands.last.is_dealer, true
+        assert_equal 1, new_hands.select(&:is_dealer).size
+        assert_equal 1, new_hands.reject(&:is_dealer).size
       end
     end
 
     it "assigns the correct cards" do
-      game.deck.stub :pop, Card.new do
+      game.deck.stub :pop, build(:card) do
         new_hands = round.initial_hands
 
-        assert_equal new_hands.first.cards.size, 2
-        assert_equal new_hands.last.cards.size, 2
+        assert_equal 2, new_hands.first.cards.size
+        assert_equal 2, new_hands.last.cards.size
       end
     end
   end
@@ -29,7 +29,7 @@ class RoundTest < ActiveSupport::TestCase
     before do
       round.hands.build(is_dealer: false)
       round.hands.build(is_dealer: true)
-      round.game.deck.cards << build(:card, rank: 2)
+      round.game.deck.cards << build(:card, rank: '2')
       round.save
     end
 
@@ -60,7 +60,7 @@ class RoundTest < ActiveSupport::TestCase
     before do
       round.hands.build(is_dealer: true)
       round.hands.build(is_dealer: false)
-      round.save
+      round.save!
 
       # give value 16 to the dealer
       round.dealer_hand.cards.create(suit: "S1", rank: "K")
@@ -114,7 +114,7 @@ class RoundTest < ActiveSupport::TestCase
 
       round.complete_round
 
-      assert_equal round.game.balance, 1200
+      assert_equal 1200, round.game.balance
     end
 
     it "marks the game as a tie if the player and dealer have the same hand value" do
@@ -134,7 +134,7 @@ class RoundTest < ActiveSupport::TestCase
 
       round.complete_round
 
-      assert_equal round.game.balance, 1000
+      assert_equal 1000, round.game.balance
     end
 
     it "marks the game as a loss if the player has a lower hand value" do

@@ -1,8 +1,10 @@
 class RoundsController < ApplicationController
+  MIN_CARDS_FOR_NEW_ROUND = 4
+
   def new
     game = Game.find(params[:game_id])
 
-    if game.deck.cards.count < 4
+    if game.deck.cards.count < MIN_CARDS_FOR_NEW_ROUND
       game.completed = true
       game.save
     end
@@ -33,32 +35,33 @@ class RoundsController < ApplicationController
 
     if ActiveRecord::Base.transaction { @round.game.save && @round.save }
       redirect_to game_round_path(@round.game, @round)
+    else
+      redirect_to :back, alert: "Something went wrong. Please try again."
     end
   end
 
   def double
-    game = Game.includes(:rounds).find(params[:game_id])
-    @round = game.rounds.find(params[:id])
-
-    game.balance -= @round.bet
+    @round = Round.includes(:game).find(params[:id])
+    @round.game.balance -= @round.bet
     @round.bet *= 2
     @round.doubled = true
 
-    if ActiveRecord::Base.transaction { game.save && @round.save }
-      redirect_to game_round_path(game, @round)
+    if ActiveRecord::Base.transaction { @round.game.save && @round.save }
+      redirect_to game_round_path(@round.game, @round)
     else
       redirect_to :back, alert: "Something went wrong. Please try again."
     end
   end
 
   def stay
-    game = Game.includes(:rounds).find(params[:game_id])
-    @round = game.rounds.find(params[:id])
+    @round = Round.includes(:game).find(params[:id])
 
     @round.complete_round
 
     if ActiveRecord::Base.transaction { @round.game.save && @round.save }
-      redirect_to game_round_path(game, @round)
+      redirect_to game_round_path(@round.game, @round)
+    else
+      redirect_to :back, alert: "Something went wrong. Please try again."
     end
   end
 

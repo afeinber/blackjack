@@ -6,13 +6,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     click_on 'Start Game'
   end
 
-  test "can see their money" do
-    start_game
-
-    assert page.has_content? "Your balance: 1000 roubles"
-  end
-
-  test "can start a game" do
+  test "player can start a game" do
     start_game
     fill_in 'round_bet', with: 50
     click_on 'Create Round'
@@ -25,7 +19,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "can hit on a round" do
+  test "player can hit on a round" do
     start_game
     fill_in 'round_bet', with: 50
     click_on 'Create Round'
@@ -33,7 +27,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     assert page.has_selector? ".player-hand .card", count: 3
   end
 
-  test "can double their bet" do
+  test "player can double their bet" do
     start_game
     fill_in 'round_bet', with: 50
     click_on 'Create Round'
@@ -43,7 +37,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     assert page.has_content? "Your balance: 900 roubles"
   end
 
-  test "can see results if over 21" do
+  test "ends round if over 21" do
     start_game
     game = Game.last
     game.deck.cards = [
@@ -53,7 +47,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
       Card.new(suit: "s2", rank: 'Q'),
       Card.new(suit: "s1", rank: 'K'),
     ]
-    game.save
+    game.save!
     fill_in 'round_bet', with: 50
     click_on 'Create Round'
     click_on 'Hit'
@@ -62,7 +56,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     assert page.has_content? "Your balance: 950 roubles"
   end
 
-  test "can choose to stay, and sees the dealers hand" do
+  test "player can choose to stay, and sees the dealers hand" do
     start_game
     fill_in 'round_bet', with: 50
     click_on 'Create Round'
@@ -72,7 +66,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "player stays and wins" do
+  test "player stays and wins round" do
     start_game
     fill_in 'round_bet', with: 50
     click_on 'Create Round'
@@ -85,7 +79,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
       Card.new(suit: "s1", rank: "A"),
       Card.new(suit: "s2", rank: "6"),
     ]
-    round.save
+    round.save!
     click_on 'Stay'
 
     assert page.has_content? "You won!"
@@ -94,7 +88,6 @@ class BlackJackTest < ActionDispatch::IntegrationTest
 
   test "dealer goes over 21" do
     start_game
-    fill_in 'round_bet', with: 50
     click_on 'Create Round'
     round = Round.last
     round.player_hand.cards = [
@@ -106,13 +99,13 @@ class BlackJackTest < ActionDispatch::IntegrationTest
       Card.new(suit: "s2", rank: "6"),
     ]
     round.game.deck.cards.push(Card.new(suit: 'S3', rank: 'Q'))
-    round.save
+    round.save!
     click_on 'Stay'
 
     assert page.has_content? "You won!"
   end
 
-  test "balance runs out" do
+  test "game ends when balance runs out" do
     start_game
     game = Game.last
     game.deck.cards = [
@@ -130,7 +123,7 @@ class BlackJackTest < ActionDispatch::IntegrationTest
     assert page.has_content? "Game over!"
   end
 
-  test "deck has no cards left" do
+  test "game ends when deck has no cards left" do
     game = GameBuilderService.build_game
     game.deck.cards = create_list(:card, 3, cardable: game.deck)
     game.save!

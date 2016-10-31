@@ -5,7 +5,10 @@ class HandTest < ActiveSupport::TestCase
 
   describe '#best_value' do
     it 'returns the value if there are no aces' do
-      hand.cards = [Card.new(rank: '5'), Card.new(rank: '7')]
+      hand.cards = [
+        build(:card, rank: '5'),
+        build(:card, rank: '7')
+      ]
 
       assert_equal 12, hand.best_value
     end
@@ -43,9 +46,9 @@ class HandTest < ActiveSupport::TestCase
   describe "#over_twenty_one?" do
     it 'returns false if under or equal to twenty-one' do
       hand.cards = [
-        create(:card, rank: "5", cardable: hand),
-        create(:card, rank: "7", cardable: hand),
-        create(:card, rank: "9", cardable: hand),
+        build(:card, rank: "5"),
+        build(:card, rank: "7"),
+        build(:card, rank: "9"),
       ]
 
       assert_equal false, hand.over_twenty_one?
@@ -53,9 +56,9 @@ class HandTest < ActiveSupport::TestCase
 
     it 'returns true if over twenty-one' do
       hand.cards = [
-        create(:card, rank: "K", cardable: hand),
-        create(:card, rank: "K", cardable: hand),
-        create(:card, rank: "2", cardable: hand),
+        build(:card, rank: "K"),
+        build(:card, rank: "K"),
+        build(:card, rank: "2"),
       ]
 
       assert_equal true, hand.over_twenty_one?

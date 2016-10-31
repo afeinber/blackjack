@@ -58,9 +58,7 @@ class Round < ApplicationRecord
       self.result = 'loss'
     end
 
-    if self.game.balance == 0
-      self.game.completed = true
-    end
+    self.game.completed = self.game.balance == 0
   end
 
   private

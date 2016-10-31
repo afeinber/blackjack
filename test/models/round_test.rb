@@ -79,6 +79,14 @@ class RoundTest < ActiveSupport::TestCase
       assert_equal round.dealer_hand.cards.size, 3
     end
 
+    it "doesnt deal cards to the dealer if the deck is empty" do
+      round.game.deck.cards = []
+
+      round.complete_round
+
+      assert_equal round.dealer_hand.cards.size, 2
+    end
+
     it "marks the game as a win if the dealer goes over 21" do
       round.player_hand.cards << build(:card, rank: '2')
       round.player_hand.cards << build(:card, rank: '2')
@@ -145,6 +153,18 @@ class RoundTest < ActiveSupport::TestCase
       round.complete_round
 
       assert_equal true, round.game.completed
+    end
+  end
+
+  describe "#can_hit?" do
+    it "returns true if there are cards left in the deck" do
+      assert_equal true, round.can_hit?
+    end
+
+    it "returns false if there are no cards left in the deck" do
+      round.game.deck.cards = []
+
+      assert_equal false, round.can_hit?
     end
   end
 

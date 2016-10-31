@@ -122,11 +122,21 @@ class BlackJackTest < ActionDispatch::IntegrationTest
       Card.new(suit: "s2", rank: 'Q'),
       Card.new(suit: "s1", rank: 'K'),
     ]
-    game.save
+    game.save!
     fill_in 'round_bet', with: 1000
     click_on 'Create Round'
     click_on 'Hit'
 
     assert page.has_content? "Game over!"
+  end
+
+  test "deck has no cards left" do
+    game = GameBuilderService.build_game
+    game.deck.cards = create_list(:card, 3, cardable: game.deck)
+    game.save!
+
+    visit "/games/#{game.id}/rounds/new"
+
+    assert page.has_content? "Game over! There are no cards left."
   end
 end

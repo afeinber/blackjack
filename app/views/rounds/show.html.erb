@@ -30,12 +30,12 @@
     <h3>You tied. Please <%= link_to "play another round!", new_game_round_path(@round.game) %></h3>
   <% end %>
 <% elsif @round.game.completed %>
-    <h3>Game over! Please <%= link_to "play again!", new_game_path(@round.game) %></h3>
+    <h3>Game over! Please <%= link_to "play again!", new_game_path %></h3>
 <% else %>
   <div class="player-actions">
     <h3>Your Actions:</h3>
     <div class="action-buttons">
-      <%= button_to "Hit", "/games/#{@round.game.id}/rounds/#{@round.id}/hit", method: :patch %>
+      <%= button_to "Hit", "/games/#{@round.game.id}/rounds/#{@round.id}/hit", method: :patch, disabled: !@round.can_hit? %>
       <%= button_to "Double", "/games/#{@round.game.id}/rounds/#{@round.id}/double", method: :patch, disabled: !@round.can_double? %>
       <%= button_to "Stay", "/games/#{@round.game.id}/rounds/#{@round.id}/stay", method: :patch %>
     </div>

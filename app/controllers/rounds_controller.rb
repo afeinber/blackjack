@@ -1,7 +1,13 @@
 class RoundsController < ApplicationController
   def new
-    @round = Round.new
-    @round.game = Game.find(params[:game_id])
+    game = Game.find(params[:game_id])
+
+    if game.deck.cards.count < 4
+      game.completed = true
+      game.save
+    end
+
+    @round = game.rounds.build
   end
 
   def create

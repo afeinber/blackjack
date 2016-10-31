@@ -4,7 +4,7 @@ class Deck < ApplicationRecord
 
   def pop
     last_card = self.cards.last
-    self.cards = self.cards - [last_card]
+    self.cards -= [last_card]
     last_card
   end
 end

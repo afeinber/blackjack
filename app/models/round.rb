@@ -2,6 +2,8 @@ class Round < ApplicationRecord
   belongs_to :game
   has_many :hands
 
+  DEALER_MIN = 17
+
   validates :bet, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :result, inclusion: { in: %w(win loss tie) }, allow_nil: true
   validates :game, presence: true
@@ -29,6 +31,10 @@ class Round < ApplicationRecord
     !doubled && game.balance >= bet
   end
 
+  def can_hit?
+    self.game.deck.cards.size > 0
+  end
+
   def player_hand
     @player_hand ||= self.hands.find_by(is_dealer: false)
   end
@@ -44,16 +50,12 @@ class Round < ApplicationRecord
 
     if player_hand.best_value > dealer_hand.best_value
       self.result = 'win'
+      self.game.balance += self.bet * 2
     elsif player_hand.best_value == dealer_hand.best_value
       self.result = 'tie'
+      self.game.balance += self.bet
     else
       self.result = 'loss'
-    end
-
-    if self.result == 'win'
-      self.game.balance += self.bet * 2
-    elsif self.result == 'tie'
-      self.game.balance += self.bet
     end
 
     if self.game.balance == 0
@@ -64,7 +66,7 @@ class Round < ApplicationRecord
   private
 
   def deal_dealer_cards
-    while dealer_hand.high_value < 17
+    while dealer_hand.high_value < DEALER_MIN && self.game.deck.cards.count > 0
       dealer_hand.cards << game.deck.pop
     end
   end

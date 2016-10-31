@@ -11,6 +11,7 @@ class RoundsController < ApplicationController
     @round.hands = @round.initial_hands
 
     if ActiveRecord::Base.transaction { @round.save && @round.game.save }
+      binding.pry
       redirect_to game_round_path(@round.game, @round)
     else
       redirect_to :back, alert: "Something went wrong. Please try again."

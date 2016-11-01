@@ -4,6 +4,9 @@ require 'rails/test_help'
 require 'capybara/rails'
 require 'minitest/mock'
 require 'minitest/rails'
+require 'database_cleaner'
+
+DatabaseCleaner.strategy = :truncation
 
 class ActionDispatch::IntegrationTest
   include Capybara::DSL

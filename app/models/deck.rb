@@ -5,6 +5,6 @@ class Deck < ApplicationRecord
   def pop
     last_card = self.cards.last
     self.cards -= [last_card]
-    last_card
+    last_card.reload
   end
 end

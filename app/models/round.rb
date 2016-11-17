@@ -9,14 +9,14 @@ class Round < ApplicationRecord
   validates :game, presence: true
 
   def initial_hands
-    [
-      self.hands.build(is_dealer: false, cards: [
-        game.deck.pop, game.deck.pop
-      ]),
-      self.hands.build(is_dealer: true, cards: [
-        game.deck.pop, game.deck.pop
-      ]),
+    hands = [
+      self.hands.create(is_dealer: false),
+      self.hands.create(is_dealer: true),
     ]
+
+    hands.each do |hand|
+      2.times { hand.cards << self.game.deck.pop }
+    end
   end
 
   def hit

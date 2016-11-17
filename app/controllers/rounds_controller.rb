@@ -13,7 +13,7 @@ class RoundsController < ApplicationController
   end
 
   def create
-    @round = Game.find(params[:game_id]).rounds.build
+    @round = Game.find(params[:game_id]).rounds.create
     @round.bet = round_params[:bet]
     @round.game.balance -= @round.bet
     @round.hands = @round.initial_hands

@@ -1,27 +1,27 @@
 require 'test_helper'
 
 class RoundTest < ActiveSupport::TestCase
-  let(:game) { create(:game, balance: 1000) }
+  let(:game) do
+    deck = create(:deck)
+    4.times { deck.cards.create }
+    create(:game, balance: 1000, deck: deck)
+  end
   let(:round) { create(:round, game: game) }
 
   describe "#initial_hands" do
     it "creates the correct hands" do
-      game.deck.stub :pop, build(:card) do
-        new_hands = round.initial_hands
+      new_hands = round.initial_hands
 
-        assert_equal new_hands.size, 2
-        assert_equal 1, new_hands.select(&:is_dealer).size
-        assert_equal 1, new_hands.reject(&:is_dealer).size
-      end
+      assert_equal new_hands.size, 2
+      assert_equal 1, new_hands.select(&:is_dealer).size
+      assert_equal 1, new_hands.reject(&:is_dealer).size
     end
 
     it "assigns the correct cards" do
-      game.deck.stub :pop, build(:card) do
-        new_hands = round.initial_hands
+      new_hands = round.initial_hands
 
-        assert_equal 2, new_hands.first.cards.size
-        assert_equal 2, new_hands.last.cards.size
-      end
+      assert_equal 2, new_hands.first.cards.size
+      assert_equal 2, new_hands.last.cards.size
     end
   end
 
